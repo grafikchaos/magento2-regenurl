@@ -62,14 +62,16 @@ class RegenerateProductUrlCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Use the specific Store View',
                 Store::DEFAULT_STORE_ID
-            )
-            ;
+            );
         return parent::configure();
     }
 
     public function execute(InputInterface $inp, OutputInterface $out)
     {
-        if (!$this->state->getAreaCode()) {
+        try {
+            // this tosses an error if the areacode is not set.
+            $this->state->getAreaCode();
+        } catch (\Exception $ex) {
             $this->state->setAreaCode('adminhtml');
         }
 
