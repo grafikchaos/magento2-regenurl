@@ -79,15 +79,16 @@ class RegenerateProductUrlCommand extends Command
         $this->collection->addStoreFilter($store_id)->setStoreId($store_id);
 
         $pids = $inp->getArgument('pids');
-        if( !empty($pids) )
+        if( !empty($pids) ) {
             $this->collection->addIdFilter($pids);
+        }
 
         $this->collection->addAttributeToSelect(['url_path', 'url_key']);
         $list = $this->collection->load();
-        foreach($list as $product)
-        {
-            if($store_id === Store::DEFAULT_STORE_ID)
+        foreach($list as $product) {
+            if($store_id === Store::DEFAULT_STORE_ID){
                 $product->setStoreId($store_id);
+            }
 
             $this->urlPersist->deleteByData([
                 UrlRewrite::ENTITY_ID => $product->getId(),
@@ -99,8 +100,7 @@ class RegenerateProductUrlCommand extends Command
                 $this->urlPersist->replace(
                     $this->productUrlRewriteGenerator->generate($product)
                 );
-            }
-            catch(\Exception $e) {
+            } catch(\Exception $e) {
                 $out->writeln('<error>Duplicated url for '. $product->getId() .'</error>');
             }
         }
